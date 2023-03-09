@@ -3,7 +3,6 @@
 #include <QMouseEvent>
 #include <QTimer>
 #include <QApplication>
-#include <QDesktopWidget>
 #include <QMessageBox>
 #include <QDesktopServices>
 #include <QThread>
@@ -646,7 +645,7 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
     {
         if (event->buttons() & Qt::LeftButton && bMousePressed_)
         {
-            this->move(event->globalPos() - dragPosition_);
+            this->move(event->globalPosition().toPoint() - dragPosition_);
             mainWindowController_->hideAllToolTips();
             event->accept();
         }
@@ -659,7 +658,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
     {
         if (event->button() == Qt::LeftButton)
         {
-            dragPosition_ = event->globalPos() - this->frameGeometry().topLeft();
+            dragPosition_ = event->globalPosition().toPoint() - this->frameGeometry().topLeft();
 
             //event->accept();
             bMousePressed_ = true;
@@ -3045,7 +3044,7 @@ void MainWindow::onSplitTunnelingAppsAddButtonClick()
 #if defined(Q_OS_WIN)
     QProcess getOpenFileNameProcess;
     QString changeIcsExePath = QCoreApplication::applicationDirPath() + "/ChangeIcs.exe";
-    getOpenFileNameProcess.start(changeIcsExePath, { "-browseforapp" }, QIODevice::ReadOnly);
+    getOpenFileNameProcess.start(changeIcsExePath, { "-browseforapp" }, QIODeviceBase::ReadOnly);
     if (getOpenFileNameProcess.waitForStarted(-1)) {
         const int kRefreshGuiMs = 10;
         do {

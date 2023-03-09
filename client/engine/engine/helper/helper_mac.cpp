@@ -114,7 +114,7 @@ void Helper_mac::enableMacSpoofingOnBoot(bool bEnable, QString interfaceName, QS
     QString strTempFilePath = QString::fromLocal8Bit(getenv("TMPDIR")) + "windscribetemp.plist";
     QString filePath = "/Library/LaunchDaemons/com.aaa.windscribe.macspoofing_on.plist";
 
-    QString macSpoofingScript = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/windscribe_macspoof.sh";
+    QString macSpoofingScript = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/windscribe_macspoof.sh";
 
     if (bEnable)
     {
@@ -122,7 +122,7 @@ void Helper_mac::enableMacSpoofingOnBoot(bool bEnable, QString interfaceName, QS
         {
             QString exePath = QCoreApplication::applicationFilePath();
             QFile file(macSpoofingScript);
-            if (file.open(QIODevice::WriteOnly | QIODevice::Text))
+            if (file.open(QIODeviceBase::WriteOnly | QIODevice::Text))
             {
                 file.resize(0);
                 QTextStream in(&file);
@@ -151,7 +151,7 @@ void Helper_mac::enableMacSpoofingOnBoot(bool bEnable, QString interfaceName, QS
 
         // create plist
         QFile file(strTempFilePath);
-        if (file.open(QIODevice::WriteOnly | QIODevice::Text))
+        if (file.open(QIODeviceBase::WriteOnly | QIODevice::Text))
         {
             file.resize(0);
             QTextStream in(&file);

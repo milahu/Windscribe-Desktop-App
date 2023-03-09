@@ -1,7 +1,6 @@
 #include "mainwindowcontroller.h"
 
 #include <QApplication>
-#include <QDesktopWidget>
 #include <QSequentialAnimationGroup>
 #include <QScreen>
 #include <QWindow>
@@ -63,7 +62,7 @@ MainWindowController::MainWindowController(QWidget *parent, LocationsWindow *loc
     view_ = new QGraphicsView(mainWindow_);
     scene_ = new QGraphicsScene(mainWindow_);
 
-    view_->setRenderHints(QPainter::HighQualityAntialiasing | QPainter::SmoothPixmapTransform | QPainter::TextAntialiasing);
+    view_->setRenderHints(QPainter::SmoothPixmapTransform | QPainter::TextAntialiasing);
 
     loginWindow_ = new LoginWindow::LoginWindowItem(nullptr, preferencesHelper);
     loggingInWindow_ = new LoginWindow::LoggingInWindowItem();
@@ -2979,9 +2978,9 @@ void MainWindowController::updateMainAndViewGeometry(bool updateShadow)
             return;
         }
 
-        const QRect desktopAvailableRc = screen->availableGeometry();
-
 #ifdef Q_OS_WIN
+
+        const QRect desktopAvailableRc = screen->availableGeometry();
 
         geo = taskbarAwareDockedGeometry_win(width, shadowSize, widthWithShadow, heightWithShadow);
         if (!geo.isValid()) {
@@ -2993,6 +2992,8 @@ void MainWindowController::updateMainAndViewGeometry(bool updateShadow)
             geo.moveRight(kMaxGeometryRightPosition);
 
 #elif defined Q_OS_MAC
+
+        const QRect desktopAvailableRc = screen->availableGeometry();
 
         // center ear on tray
         int rightEarCenterOffset = static_cast<int>(41 * G_SCALE);
@@ -3170,7 +3171,7 @@ void MainWindowController::clearMaskForGraphicsView()
 void MainWindowController::keepWindowInsideScreenCoordinates()
 {
     QRect rcWindow = mainWindow_->geometry();
-    QRect rcScreen = QApplication::desktop()->availableGeometry(mainWindow_);
+    QRect rcScreen = QGuiApplication::primaryScreen()->availableGeometry();
 
     if (rcWindow.bottom() > (rcScreen.bottom()))
     {

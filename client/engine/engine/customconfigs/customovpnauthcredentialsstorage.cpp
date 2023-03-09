@@ -2,7 +2,7 @@
 
 #include <QSettings>
 
-CustomOvpnAuthCredentialsStorage::CustomOvpnAuthCredentialsStorage() : mutex_(QMutex::Recursive)
+CustomOvpnAuthCredentialsStorage::CustomOvpnAuthCredentialsStorage() : mutex_(QRecursiveMutex())
 {
     readFromSettings();
 }
@@ -53,7 +53,7 @@ void CustomOvpnAuthCredentialsStorage::readFromSettings()
     if (settings.contains("customOvpnAuths"))
     {
         QByteArray arr = settings.value("customOvpnAuths").toByteArray();
-        QDataStream in(&arr,QIODevice::ReadOnly);
+        QDataStream in(&arr,QIODeviceBase::ReadOnly);
         in >> hash_;
     }
 }
@@ -62,7 +62,7 @@ void CustomOvpnAuthCredentialsStorage::writeToSettings()
 {
     QMutexLocker locker(&mutex_);
     QByteArray arr;
-    QDataStream out(&arr,QIODevice::WriteOnly);
+    QDataStream out(&arr,QIODeviceBase::WriteOnly);
     out << hash_;
 
     QSettings settings;

@@ -10,7 +10,7 @@
 #include <QCoreApplication>
 #include <QFile>
 #include <QHostAddress>
-#include <QRegExp>
+#include <QRegularExpression>
 
 #include "logger.h"
 #include "wsscopeguard.h"
@@ -70,9 +70,10 @@ QString getLinuxKernelVersion()
     struct utsname unameData;
     if (uname(&unameData) == 0)
     {
-        QRegExp rx("(\\d+\\.\\d+(\\.\\d+)*)");
-        if(rx.indexIn(unameData.release, 0) != -1) {
-            return rx.cap(1);
+        QRegularExpression re("(\\d+\\.\\d+(\\.\\d+)*)");
+        QRegularExpressionMatch match = re.match(unameData.release);
+        if(match.hasMatch()) {
+            return match.captured(1);
         }
     }
 
@@ -96,7 +97,7 @@ const QString getLastInstallPlatform()
 
     QFile lastInstallPlatform(LAST_INSTALL_PLATFORM_FILE);
 
-    if (!lastInstallPlatform.open(QIODevice::ReadOnly))
+    if (!lastInstallPlatform.open(QIODeviceBase::ReadOnly))
     {
         qCDebug(LOG_BASIC) << "Couldn't open previous install platform file: " << LAST_INSTALL_PLATFORM_FILE;
         return "";

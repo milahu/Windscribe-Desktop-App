@@ -4,6 +4,7 @@
 #include <QCoreApplication>
 #include <QProcess>
 #include <QSettings>
+#include <QRegularExpression>
 
 QStringList OpenVpnVersionController::getAvailableOpenVpnVersions()
 {
@@ -161,9 +162,9 @@ QString OpenVpnVersionController::detectVersion(const QString &path)
     QString strAnswer = QString::fromStdString((const char *)process.readAll().data()).toLower();
 
     // parse version from process output
-    QRegExp rx("\\d{1,}.\\d{1,}.\\d{1,}");
-    rx.indexIn(strAnswer);
-    QStringList list = rx.capturedTexts();
+    QRegularExpression rx("\\d{1,}.\\d{1,}.\\d{1,}");
+    QRegularExpressionMatch match = rx.match(strAnswer);
+    QStringList list = match.capturedTexts();
     Q_ASSERT(list.count() == 1);
     if (list.count() == 1)
     {
