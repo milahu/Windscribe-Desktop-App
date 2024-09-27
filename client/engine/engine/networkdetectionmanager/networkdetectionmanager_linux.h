@@ -2,7 +2,7 @@
 #define NETWORKDETECTIONMANAGER_LINUX_H
 
 #include <QMutex>
-#include <QNetworkConfigurationManager>
+#include <QNetworkInformation>
 #include "engine/helper/ihelper.h"
 #include "inetworkdetectionmanager.h"
 
@@ -16,12 +16,14 @@ public:
     bool isOnline() override;
 
 private slots:
-    void onNetworkUpdated(const QNetworkConfiguration &config);
+    void isMeteredChanged(bool _isMetered);
+    void reachabilityChanged(QNetworkInformation::Reachability _newReachability);
+    void transportMediumChanged(QNetworkInformation::TransportMedium _current);
 
 private:
     bool isOnline_;
     ProtoTypes::NetworkInterface networkInterface_;
-    QNetworkConfigurationManager *ncm_;
+    QNetworkInformation *ncm_;
 
 
     void updateNetworkInfo(bool bWithEmitSignal);

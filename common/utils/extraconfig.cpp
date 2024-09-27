@@ -29,7 +29,7 @@ void ExtraConfig::writeConfig(const QString &cfg)
     }
     else
     {
-        if (file.open(QIODevice::WriteOnly))
+        if (file.open(QIODeviceBase::WriteOnly))
         {
             file.resize(0);
             file.write(cfg.toLocal8Bit());
@@ -43,7 +43,7 @@ QString ExtraConfig::getExtraConfig(bool bWithLog)
 {
     QMutexLocker locker(&mutex_);
     QFile fileExtra(path_);
-    if (fileExtra.open(QIODevice::ReadOnly))
+    if (fileExtra.open(QIODeviceBase::ReadOnly))
     {
         QByteArray extraArr = fileExtra.readAll();
         if (bWithLog)
@@ -291,8 +291,8 @@ bool ExtraConfig::isLegalOpenVpnCommand(const QString &command) const
     return true;
 }
 
-ExtraConfig::ExtraConfig() : mutex_(QMutex::Recursive),
-                             path_(QStandardPaths::writableLocation(QStandardPaths::DataLocation)
+ExtraConfig::ExtraConfig() : mutex_(QRecursiveMutex()),
+                             path_(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)
                                    + "/windscribe_extra.conf"),
                              regExp_("(?m)^(?i)(verb)(\\s+)(\\d+$)")
 {

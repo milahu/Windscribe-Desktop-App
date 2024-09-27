@@ -24,7 +24,7 @@ StunnelManager::StunnelManager(QObject *parent) : QObject(parent), bProcessStart
     qCDebug(LOG_BASIC) << Utils::cleanSensitiveInfo(stunelExePath_);
 #endif
 
-    QString strPath = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
+    QString strPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
     QDir dir(strPath);
     dir.mkpath(strPath);
     path_ = strPath + "/stunnel.conf";
@@ -109,7 +109,7 @@ void StunnelManager::onStunnelProcessFinished()
 bool StunnelManager::makeConfigFile(const QString &hostname, uint port)
 {
     QFile file(path_);
-    if (file.open(QIODevice::WriteOnly))
+    if (file.open(QIODeviceBase::WriteOnly))
     {
         file.resize(0);
 

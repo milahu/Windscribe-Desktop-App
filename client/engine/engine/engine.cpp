@@ -73,7 +73,7 @@ Engine::Engine(const EngineSettings &engineSettings) : QObject(nullptr),
     bInitialized_(false),
     loginController_(nullptr),
     loginState_(LOGIN_NONE),
-    loginSettingsMutex_(QMutex::Recursive),
+    loginSettingsMutex_(QRecursiveMutex()),
     updateServerResourcesTimer_(nullptr),
     updateSessionStatusTimer_(nullptr),
     notificationsUpdateTimer_(nullptr),
@@ -1120,10 +1120,10 @@ void Engine::sendDebugLogImpl()
 
     /*
     // For testing merge log functionality
-    QString path = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
+    QString path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
     path += "/merged_logs.txt";
     QFile file(path);
-    if (file.open(QIODevice::WriteOnly | QIODevice::Truncate))
+    if (file.open(QIODeviceBase::WriteOnly | QIODevice::Truncate))
     {
         file.write(log.toLatin1());
         file.close();
@@ -2957,7 +2957,7 @@ void Engine::updateProxySettings()
 bool Engine::verifyContentsSha256(const QString &filename, const QString &compareHash)
 {
     QFile file(filename);
-    if (!file.open(QIODevice::ReadOnly))
+    if (!file.open(QIODeviceBase::ReadOnly))
     {
         qCDebug(LOG_BASIC) << "Failed to open installer for reading";
         return false;

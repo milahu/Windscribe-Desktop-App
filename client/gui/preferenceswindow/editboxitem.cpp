@@ -86,7 +86,7 @@ void EditBoxItem::setText(const QString &text)
     update();
 }
 
-void EditBoxItem::setValidator(QRegExpValidator *validator)
+void EditBoxItem::setValidator(QRegularExpressionValidator *validator)
 {
     lineEdit_->setValidator(validator);
 }
@@ -106,12 +106,13 @@ void EditBoxItem::setMasked(bool masked)
 {
     if (masked) {
         QStyleOptionFrame opt;
-        opt.init(lineEdit_);
-        maskingChar_ =
-            lineEdit_->style()->styleHint(QStyle::SH_LineEdit_PasswordCharacter, &opt, lineEdit_);
+        opt.initFrom(lineEdit_);
+        maskingChar_ = QChar(
+            lineEdit_->style()->styleHint(QStyle::SH_LineEdit_PasswordCharacter, &opt, lineEdit_)
+        );
         lineEdit_->setEchoMode(QLineEdit::Password);
     } else {
-        maskingChar_ = 0;
+        maskingChar_ = QChar(0);
         lineEdit_->setEchoMode(QLineEdit::Normal);
     }
     update();

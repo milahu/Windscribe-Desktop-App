@@ -6,12 +6,12 @@
 #include "engine/helper/ihelper.h"
 
 FirewallController_linux::FirewallController_linux(QObject *parent, IHelper *helper) :
-    FirewallController(parent), forceUpdateInterfaceToSkip_(false), mutex_(QMutex::Recursive),
+    FirewallController(parent), forceUpdateInterfaceToSkip_(false), mutex_(QRecursiveMutex()),
     comment_("\"Windscribe client rule\"")
 {
     helper_ = dynamic_cast<Helper_linux *>(helper);
 
-    pathToTempTable_ = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
+    pathToTempTable_ = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
     QDir dir(pathToTempTable_);
     dir.mkpath(pathToTempTable_);
     pathToTempTable_ += "/windscribe_table.txt";
@@ -129,7 +129,7 @@ bool FirewallController_linux::firewallOnImpl(const QString &ip, bool bAllowLanT
     // rules for IPv4
     {
         QFile file(pathToTempTable_);
-        if (file.open(QIODevice::WriteOnly))
+        if (file.open(QIODeviceBase::WriteOnly))
         {
             QTextStream stream(&file);
 
@@ -210,7 +210,7 @@ bool FirewallController_linux::firewallOnImpl(const QString &ip, bool bAllowLanT
     // rules for IPv6 (disable IPv6)
     {
         QFile file(pathToTempTable_);
-        if (file.open(QIODevice::WriteOnly))
+        if (file.open(QIODeviceBase::WriteOnly))
         {
             QTextStream stream(&file);
 
@@ -269,7 +269,7 @@ QStringList FirewallController_linux::getWindscribeRules(const QString &comment,
     }
     // Get Windscribe rules
     QFile file(pathToTempTable_);
-    if (!file.open(QIODevice::ReadOnly))
+    if (!file.open(QIODeviceBase::ReadOnly))
     {
         qCDebug(LOG_FIREWALL_CONTROLLER) << "Can't open file:" << pathToTempTable_;
     }
@@ -331,7 +331,7 @@ void FirewallController_linux::removeWindscribeRules(const QString &comment, boo
         }
 
         QFile file(pathToTempTable_);
-        if (file.open(QIODevice::WriteOnly | QIODevice::Text))
+        if (file.open(QIODeviceBase::WriteOnly | QIODevice::Text))
         {
             QTextStream out(&file);
             for (const auto &l : rules)

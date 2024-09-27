@@ -3,6 +3,7 @@
 #include <QFile>
 #include <QStringList>
 #include <QTextStream>
+#include <QRegularExpression>
 
 #include <system_error>
 
@@ -30,7 +31,7 @@ WireGuardConfig::WireGuardConfig(const QString &privateKey, const QString &ipAdd
 // static
 QString WireGuardConfig::stripIpv6Address(const QStringList &addressList)
 {
-    const QRegExp rx("^\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}(.*)$");
+    const QRegularExpression rx("^\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}(.*)$");
     QString s = addressList.filter(rx).join(",");
     return s;
 }
@@ -38,7 +39,7 @@ QString WireGuardConfig::stripIpv6Address(const QStringList &addressList)
 // static
 QString WireGuardConfig::stripIpv6Address(const QString &addressList)
 {
-    return stripIpv6Address(addressList.split(",", QString::SkipEmptyParts));
+    return stripIpv6Address(addressList.split(",", Qt::SkipEmptyParts));
 }
 
 void WireGuardConfig::generateConfigFile(const QString &fileName) const
@@ -50,7 +51,7 @@ void WireGuardConfig::generateConfigFile(const QString &fileName) const
     // The wireguard-windows service cannot handle these double-quoted entries.
 
     QFile theFile(fileName);
-    bool bResult = theFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate);
+    bool bResult = theFile.open(QIODeviceBase::WriteOnly | QIODevice::Text | QIODevice::Truncate);
 
     if (!bResult) {
         throw std::system_error(0, std::generic_category(),

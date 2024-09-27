@@ -41,7 +41,7 @@ AutoConnSettingsPolicy::AutoConnSettingsPolicy(QSharedPointer<locationsmodel::Ba
     if (settings.contains("successConnectionProtocol"))
     {
         QByteArray arr = settings.value("successConnectionProtocol").toByteArray();
-        QDataStream stream(&arr, QIODevice::ReadOnly);
+        QDataStream stream(&arr, QIODeviceBase::ReadOnly);
         QString strProtocol;
         stream >> strProtocol;
         lastSuccessProtocolSaved = ProtocolType(strProtocol);
@@ -210,7 +210,7 @@ void AutoConnSettingsPolicy::saveCurrentSuccessfullConnectionSettings()
 
     QByteArray arr;
     {
-        QDataStream stream(&arr, QIODevice::WriteOnly);
+        QDataStream stream(&arr, QIODeviceBase::WriteOnly);
         stream << protocol;
     }
     settings.setValue("successConnectionProtocol", arr);

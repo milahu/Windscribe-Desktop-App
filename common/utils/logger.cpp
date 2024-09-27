@@ -48,7 +48,7 @@ void Logger::install(const QString &name, bool consoleOutput, bool recoveryMode)
 {
     //QLoggingCategory::setFilterRules("basic=false\nipc=false\nserver_api=false");
 
-    QString logFilePath = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
+    QString logFilePath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
     QDir dir(logFilePath);
     dir.mkpath(logFilePath);
     prevLogPath_ = logFilePath + "/prev_log_" + name + ".txt";
@@ -61,7 +61,7 @@ void Logger::install(const QString &name, bool consoleOutput, bool recoveryMode)
     if (!recoveryMode)
     {
         copyToPrevLog();
-        openModeFlag = QIODevice::WriteOnly;
+        openModeFlag = QIODeviceBase::WriteOnly;
     }
 
     QMutexLocker lock(&mutex_);
@@ -122,7 +122,7 @@ QString Logger::getLogStr()
     QMutexLocker lock(&mutex_);
     QString ret;
     QFile prevFileLog(prevLogPath_);
-    if (prevFileLog.open(QIODevice::ReadOnly))
+    if (prevFileLog.open(QIODeviceBase::ReadOnly))
     {
         ret = prevFileLog.readAll();
         ret += "----------------------------------------------------------------\n";

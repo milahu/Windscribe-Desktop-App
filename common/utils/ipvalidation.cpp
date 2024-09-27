@@ -3,17 +3,17 @@
 
 bool IpValidation::isIp(const QString &str)
 {
-    return ipRegex_.exactMatch(str);
+    return ipRegex_.match(str).hasMatch();
 }
 
 bool IpValidation::isIpCidr(const QString &str)
 {
-    return ipCidrRegex_.exactMatch(str);
+    return ipCidrRegex_.match(str).hasMatch();
 }
 
 bool IpValidation::isDomain(const QString &str)
 {
-    return str.size() <= 253 && domainRegex_.exactMatch(str);
+    return str.size() <= 253 && domainRegex_.match(str).hasMatch();
 }
 
 bool IpValidation::isIpOrDomain(const QString &str)
@@ -28,7 +28,7 @@ bool IpValidation::isIpCidrOrDomain(const QString &str)
 
 bool IpValidation::isValidIpForCidr(const QString &str)
 {
-    const auto ip_and_cidr = str.split("/", QString::SkipEmptyParts);
+    const auto ip_and_cidr = str.split("/", Qt::SkipEmptyParts);
     const quint32 cidr_value = (ip_and_cidr.size() < 2) ? 32 : ip_and_cidr[1].toUInt();
     if (cidr_value == 32) {
         // CIDR is 32 or not specified, this is a single IP.
@@ -80,6 +80,8 @@ QString IpValidation::getRemoteIdFromDomain(const QString &str)
 IpValidation::IpValidation()
 {
     QString ipRange = "(?:[0-1]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])";
+    // note: the patterns are "anchored" (^...$)
+    // so no need for QRegExp::exactMatch (qt5) or QRegularExpression::anchoredPattern (qt6)
     ipRegex_.setPattern("^" + ipRange + "\\." + ipRange + "\\." + ipRange + "\\." + ipRange + "$");
     ipCidrRegex_.setPattern("^([0-9]{1,3}\\.){3}[0-9]{1,3}(\\/([0-9]|[1-2][0-9]|3[0-2]))?$");
     domainRegex_.setPattern("^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\\.){1,}([a-zA-Z][a-zA-Z0-9-]*[a-zA-Z])$");
